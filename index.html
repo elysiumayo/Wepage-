@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Electronics Inspired Name</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a1128;
+            --bg-darker: #03091c;
+            --circuit-green: #00aa41;
+            --circuit-blue: #0077aa;
+            --text-primary: #6ad4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #name {
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+            letter-spacing: -2px;
+            text-shadow: 
+                0 0 5px rgba(106, 212, 255, 0.3),
+                0 0 10px rgba(106, 212, 255, 0.2);
+            z-index: 10;
+        }
+
+        #name::after {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 80px;
+            background-color: var(--circuit-blue);
+            animation: blink 0.7s infinite alternate;
+            margin-left: 10px;
+            opacity: 0.6;
+            box-shadow: 0 0 5px rgba(106, 212, 255, 0.3);
+        }
+
+        /* Graph Paper-Like Background */
+        .graph-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.1); /* Light background */
+            z-index: 1;
+            pointer-events: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 30px); /* Adjust box size */
+            grid-template-rows: repeat(auto-fill, 30px);
+        }
+
+        .graph-background div {
+            width: 30px; /* Size of each box */
+            height: 30px;
+            border: 1px solid rgba(106, 212, 255, 0.2); /* Light border for graph paper effect */
+            opacity: 0.4; /* Initial opacity for top part */
+        }
+
+        /* Fade and blur effect as boxes move downward */
+        .graph-background::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
+            filter: blur(2px); /* Blur the bottom section of the grid */
+        }
+
+        @keyframes blink {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fall {
+            to {
+                transform: 
+                    translateY(100vh) 
+                    rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        #snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .snowflake {
+            position: absolute;
+            background: linear-gradient(var(--circuit-green), var(--circuit-blue));
+            border-radius: 50%;
+            pointer-events: none;
+            will-change: transform;
+            box-shadow: 0 0 5px rgba(106, 212, 255, 0.5);
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="graph-background"></div>
+    <div id="snow-container"></div>
+    <div id="name"></div>
+
+    <script>
+        const nameElement = document.getElementById('name');
+        const snowContainer = document.getElementById('snow-container');
+        const yourName = "ElysiumAyo"; // Replace with your name or field of interest
+
+        // Create grid background dynamically
+        function createGraphBackground() {
+            const rows = Math.ceil(window.innerHeight / 30);  // Adjust based on box size
+            const cols = Math.ceil(window.innerWidth / 30);  // Adjust based on box size
+
+            for (let i = 0; i < rows * cols; i++) {
+                const box = document.createElement('div');
+                document.querySelector('.graph-background').appendChild(box);
+            }
+        }
+
+        function typeWriter(text, element) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 150); // Controls typing speed
+                }
+            }
+            type();
+        }
+
+        function createSnowflakes() {
+            const snowflakeCount = Math.min(window.innerWidth / 6, 50); // Adjusted for better performance
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                const size = Math.random() * 3 + 2; // Snowflake size between 2px and 5px
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                snowflake.style.left = `${Math.random() * 100}vw`;
+                snowflake.style.top = `${-Math.random() * 100}px`;
+                
+                const animationDuration = Math.random() * 10 + 5; // Fall duration between 5s and 15s
+                const animationDelay = Math.random() * 5; // Random delay before falling
+                
+                snowflake.style.animation = `fall ${animationDuration}s linear ${animationDelay}s infinite`;
+                
+                snowContainer.appendChild(snowflake);
+            }
+        }
+
+        // Initialize
+        typeWriter(yourName, nameElement);
+        createSnowflakes();
+        createGraphBackground();
+
+        // Recreate on resize
+        window.addEventListener('resize', () => {
+            document.querySelector('.graph-background').innerHTML = ''; // Clear the background grid
+            createGraphBackground();
+            snowContainer.innerHTML = ''; // Clear snowflakes and recreate
+            createSnowflakes();
+        });
+    </script>
+</body>
+</html>
