@@ -169,6 +169,16 @@
             bottom: 50px;
             left: 10px;
         }
+
+        #greeting {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            color: var(--circuit-green);
+            font-weight: 700;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -181,9 +191,12 @@
     <a href="https://matrix.org" class="hypertext matrix">Matrix</a>
     <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)" class="hypertext skylake">Skylake</a>
 
+    <div id="greeting"></div>
+
     <script>
         const nameElement = document.getElementById('name');
         const snowContainer = document.getElementById('snow-container');
+        const greetingElement = document.getElementById('greeting');
         const yourName = "ElysiumAyo"; // Customize your name/text here
 
         // Create snowflakes
@@ -240,11 +253,28 @@
             type();
         }
 
+        // Get time-based greeting in Japanese
+        function getGreeting() {
+            const hours = new Date().getHours();
+            let greeting = '';
+            
+            if (hours < 12) {
+                greeting = 'おはようございます'; // Good morning
+            } else if (hours < 18) {
+                greeting = 'こんにちは'; // Good afternoon
+            } else {
+                greeting = 'こんばんは'; // Good evening
+            }
+            
+            return greeting;
+        }
+
         // Initialize
         function init() {
             typeWriter(yourName, nameElement);
             createSnowflakes();
             createGraphBackground();
+            greetingElement.textContent = getGreeting();
         }
 
         // Resize listener
@@ -254,6 +284,7 @@
             createSnowflakes();
         });
 
+        // Start the animation and greeting
         init();
     </script>
 </body>
