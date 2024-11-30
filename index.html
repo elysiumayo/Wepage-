@@ -31,6 +31,7 @@
             overflow: hidden;
             font-family: 'Orbitron', sans-serif;
             perspective: 1000px;
+            padding: 0 10px; /* Added padding for small screens */
         }
 
         .container {
@@ -85,8 +86,8 @@
             z-index: 0;
             pointer-events: none;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 10px); /* Reduced from 15px */
-            grid-template-rows: repeat(auto-fill, 10px);    /* Reduced from 15px */
+            grid-template-columns: repeat(auto-fill, 10px);
+            grid-template-rows: repeat(auto-fill, 10px);
         }
 
         .graph-background div {
@@ -174,10 +175,29 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            font-size: 1.5rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             color: var(--circuit-green);
             font-weight: 700;
             z-index: 10;
+        }
+
+        /* Media Queries for responsiveness */
+        @media screen and (max-width: 768px) {
+            #name {
+                font-size: clamp(2rem, 10vw, 3.5rem);
+            }
+            #greeting {
+                font-size: clamp(1rem, 5vw, 1.5rem);
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            #name {
+                font-size: clamp(1.5rem, 12vw, 3rem);
+            }
+            #greeting {
+                font-size: clamp(1rem, 6vw, 1.2rem);
+            }
         }
     </style>
 </head>
@@ -240,52 +260,49 @@
             background.appendChild(fragment);
         }
 
-        // Type writer effect
-        function typeWriter(text, element) {
+        // Type writer effect for the name
+        function typeName() {
             let i = 0;
+            const text = yourName;
             function type() {
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    nameElement.innerHTML += text.charAt(i);
                     i++;
-                    setTimeout(type, 150);
+                    setTimeout(type, 100);
                 }
             }
             type();
         }
 
-        // Get time-based greeting in Japanese
-        function getGreeting() {
-            const hours = new Date().getHours();
-            let greeting = '';
-            
-            if (hours < 12) {
-                greeting = 'おはようございます'; // Good morning
-            } else if (hours < 18) {
-                greeting = 'こんにちは'; // Good afternoon
+        // Time-based greeting
+        function setGreeting() {
+            const hour = new Date().getHours();
+            let greeting = "こんにちは";
+            if (hour < 12) {
+                greeting = "おはようございます"; // Good Morning
+            } else if (hour < 18) {
+                greeting = "こんにちは"; // Good Afternoon
             } else {
-                greeting = 'こんばんは'; // Good evening
+                greeting = "こんばんは"; // Good Evening
             }
-            
-            return greeting;
+            greetingElement.textContent = greeting;
         }
 
         // Initialize
         function init() {
-            typeWriter(yourName, nameElement);
-            createSnowflakes();
             createGraphBackground();
-            greetingElement.textContent = getGreeting();
+            typeName();
+            setGreeting();
+            createSnowflakes();
         }
-
-        // Resize listener
-        window.addEventListener('resize', () => {
-            createGraphBackground();
-            snowContainer.innerHTML = '';
-            createSnowflakes();
-        });
 
         // Start the animation and greeting
         init();
+
+        window.addEventListener('resize', () => {
+            createGraphBackground();
+            createSnowflakes();
+        });
     </script>
 </body>
 </html>
