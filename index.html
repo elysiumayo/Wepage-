@@ -173,8 +173,8 @@
 
         #greeting {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 10px;
+            left: 10px;
             font-size: clamp(1.5rem, 4vw, 2rem);
             color: var(--circuit-green);
             font-weight: 700;
@@ -279,11 +279,11 @@
             const hour = new Date().getHours();
             let greeting = "こんにちは";
             if (hour < 12) {
-                greeting = "おはようございます"; // Good Morning
+                greeting = "- おはようございます"; // Good Morning
             } else if (hour < 18) {
-                greeting = "こんにちは"; // Good Afternoon
+                greeting = "- こんにちは"; // Good Afternoon
             } else {
-                greeting = "こんばんは"; // Good Evening
+                greeting = "- こんばんは"; // Good Evening
             }
             greetingElement.textContent = greeting;
         }
