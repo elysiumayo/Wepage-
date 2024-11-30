@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Electronics Inspired Name</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics Inspired Design</title>
+    <meta name="description" content="An interactive, electronics-inspired landing page with dynamic typography and particle effects">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,6 +13,7 @@
             --circuit-green: #00aa41;
             --circuit-blue: #0077aa;
             --text-primary: #6ad4ff;
+            --accent-color: #00ffaa;
         }
 
         * {
@@ -27,10 +30,20 @@
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             overflow: hidden;
             font-family: 'Orbitron', sans-serif;
+            perspective: 1000px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
         }
 
         #name {
-            font-size: 4.5rem;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 700;
             color: var(--text-primary);
             position: relative;
@@ -38,14 +51,23 @@
             text-shadow: 
                 0 0 5px rgba(106, 212, 255, 0.3),
                 0 0 10px rgba(106, 212, 255, 0.2);
-            z-index: 10;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            display: inline-block; 
+            line-height: 1.2; /* Ensures consistent line height */
+        }
+
+        #name:hover {
+            transform: scale(1.05) rotateX(10deg);
         }
 
         #name::after {
             content: '';
-            display: inline-block;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
             width: 4px;
-            height: 80px;
+            height: 0.8em;
             background-color: var(--circuit-blue);
             animation: blink 0.7s infinite alternate;
             margin-left: 10px;
@@ -53,29 +75,27 @@
             box-shadow: 0 0 5px rgba(106, 212, 255, 0.3);
         }
 
-        /* Graph Paper-Like Background */
         .graph-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.1); /* Light background */
+            background-color: rgba(0, 0, 0, 0.1);
             z-index: 1;
             pointer-events: none;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 30px); /* Adjust box size */
-            grid-template-rows: repeat(auto-fill, 30px);
+            grid-template-columns: repeat(auto-fill, 15px); /* Reduced from 30px to 15px */
+            grid-template-rows: repeat(auto-fill, 15px); /* Reduced from 30px to 15px */
         }
 
         .graph-background div {
-            width: 30px; /* Size of each box */
-            height: 30px;
-            border: 1px solid rgba(106, 212, 255, 0.2); /* Light border for graph paper effect */
-            opacity: 0.4; /* Initial opacity for top part */
+            width: 15px; /* Reduced from 30px to 15px */
+            height: 15px; /* Reduced from 30px to 15px */
+            border: 1px solid rgba(106, 212, 255, 0.1); /* Reduced opacity */
+            opacity: 0.2; /* Reduced from 0.4 to 0.2 */
         }
 
-        /* Fade and blur effect as boxes move downward */
         .graph-background::after {
             content: "";
             position: absolute;
@@ -83,24 +103,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0) 0%, 
+                rgba(0, 0, 0, 0.3) 50%, 
+                rgba(0, 0, 0, 0.7) 100%);
             pointer-events: none;
             z-index: 1;
-            filter: blur(2px); /* Blur the bottom section of the grid */
-        }
-
-        @keyframes blink {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fall {
-            to {
-                transform: 
-                    translateY(100vh) 
-                    rotate(360deg);
-                opacity: 0;
-            }
+            filter: blur(2px);
         }
 
         #snow-container {
@@ -123,76 +132,125 @@
             opacity: 0.8;
         }
 
+        @keyframes blink {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fall {
+            to {
+                transform: 
+                    translateY(100vh) 
+                    rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #name {
+                letter-spacing: -1px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="graph-background"></div>
     <div id="snow-container"></div>
-    <div id="name"></div>
+    <div class="container">
+        <div id="name" aria-label="Animated Name"></div>
+    </div>
 
     <script>
         const nameElement = document.getElementById('name');
         const snowContainer = document.getElementById('snow-container');
-        const yourName = "ElysiumAyo"; // Replace with your name or field of interest
+        const yourName = "Electronics"; // Customize your name/text here
 
-        // Create grid background dynamically
-        function createGraphBackground() {
-            const rows = Math.ceil(window.innerHeight / 30);  // Adjust based on box size
-            const cols = Math.ceil(window.innerWidth / 30);  // Adjust based on box size
-
-            for (let i = 0; i < rows * cols; i++) {
-                const box = document.createElement('div');
-                document.querySelector('.graph-background').appendChild(box);
+        // Improved performance-optimized functions
+        function createSnowflakes() {
+            const snowflakeCount = Math.min(window.innerWidth / 6, 50);
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                const size = Math.random() * 3 + 2;
+                snowflake.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${Math.random() * 100}vw;
+                    top: ${-Math.random() * 100}px;
+                    animation: fall ${Math.random() * 10 + 5}s linear ${Math.random() * 5}s infinite;
+                `;
+                
+                snowflake.setAttribute('aria-hidden', 'true');
+                
+                fragment.appendChild(snowflake);
             }
+            
+            snowContainer.appendChild(fragment);
         }
 
+        function createGraphBackground() {
+            const background = document.querySelector('.graph-background');
+            background.innerHTML = '';
+            
+            const rows = Math.ceil(window.innerHeight / 15);
+            const cols = Math.ceil(window.innerWidth / 15);
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < rows * cols; i++) {
+                fragment.appendChild(document.createElement('div'));
+            }
+            
+            background.appendChild(fragment);
+        }
+
+        // Debounce function to optimize resize performance
+        function debounce(func, wait = 250) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Type writer effect
         function typeWriter(text, element) {
             let i = 0;
             function type() {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
-                    setTimeout(type, 150); // Controls typing speed
+                    setTimeout(type, 150);
                 }
             }
             type();
         }
 
-        function createSnowflakes() {
-            const snowflakeCount = Math.min(window.innerWidth / 6, 50); // Adjusted for better performance
-            
-            for (let i = 0; i < snowflakeCount; i++) {
-                const snowflake = document.createElement('div');
-                snowflake.classList.add('snowflake');
-                
-                const size = Math.random() * 3 + 2; // Snowflake size between 2px and 5px
-                snowflake.style.width = `${size}px`;
-                snowflake.style.height = `${size}px`;
-                
-                snowflake.style.left = `${Math.random() * 100}vw`;
-                snowflake.style.top = `${-Math.random() * 100}px`;
-                
-                const animationDuration = Math.random() * 10 + 5; // Fall duration between 5s and 15s
-                const animationDelay = Math.random() * 5; // Random delay before falling
-                
-                snowflake.style.animation = `fall ${animationDuration}s linear ${animationDelay}s infinite`;
-                
-                snowContainer.appendChild(snowflake);
-            }
+        // Initialize functions
+        function init() {
+            typeWriter(yourName, nameElement);
+            createSnowflakes();
+            createGraphBackground();
         }
 
-        // Initialize
-        typeWriter(yourName, nameElement);
-        createSnowflakes();
-        createGraphBackground();
-
-        // Recreate on resize
-        window.addEventListener('resize', () => {
-            document.querySelector('.graph-background').innerHTML = ''; // Clear the background grid
+        // Event listeners
+        window.addEventListener('resize', debounce(() => {
             createGraphBackground();
-            snowContainer.innerHTML = ''; // Clear snowflakes and recreate
+            snowContainer.innerHTML = '';
             createSnowflakes();
-        });
+        }));
+
+        // Initial load
+        init();
+
+        // Optional: Add console message
+        console.log('🖥️ Electronics-Inspired Design Loaded');
     </script>
 </body>
 </html>
