@@ -14,7 +14,6 @@
             --circuit-blue: #0077aa;
             --text-primary: #6ad4ff;
             --accent-color: #00ffaa;
-            --hypertext-color: #6ad4ff;
         }
 
         * {
@@ -24,7 +23,7 @@
         }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -54,8 +53,8 @@
                 0 0 10px rgba(106, 212, 255, 0.2);
             transform-style: preserve-3d;
             transition: all 0.3s ease;
-            display: inline-block; 
-            line-height: 1.2; /* Ensures consistent line height */
+            display: inline-block;
+            line-height: 1.2;
         }
 
         #name:hover {
@@ -83,18 +82,33 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.1);
-            z-index: 1;
+            z-index: 0;
             pointer-events: none;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 15px);
-            grid-template-rows: repeat(auto-fill, 15px);
+            grid-template-columns: repeat(auto-fill, 10px); /* Reduced from 15px */
+            grid-template-rows: repeat(auto-fill, 10px);    /* Reduced from 15px */
         }
 
         .graph-background div {
-            width: 15px;
-            height: 15px;
+            width: 10px;
+            height: 10px;
             border: 1px solid rgba(106, 212, 255, 0.1);
-            opacity: 0.2;
+        }
+
+        .graph-background::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0) 0%, 
+                rgba(0, 0, 0, 0.3) 50%, 
+                rgba(0, 0, 0, 0.7) 100%);
+            pointer-events: none;
+            z-index: 1;
+            filter: blur(2px);
         }
 
         #snow-container {
@@ -131,36 +145,29 @@
             }
         }
 
-        /* Hypertext styles */
         .hypertext {
-            position: absolute;
-            font-family: 'Orbitron', sans-serif;
+            position: fixed;
             font-size: 1rem;
-            color: var(--hypertext-color);
+            color: var(--text-primary);
             text-decoration: none;
-            letter-spacing: 1px;
-            transition: color 0.3s ease, transform 0.3s ease;
+            font-weight: 700;
+            z-index: 10;
         }
 
-        .hypertext:hover {
-            color: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        #github-link {
+        .github {
             bottom: 10px;
-            right: 20px;
+            right: 10px;
         }
 
-        #matrix-link {
+        .matrix {
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        #skylake-link {
+        .skylake {
             bottom: 10px;
-            left: 20px;
+            left: 10px;
         }
     </style>
 </head>
@@ -170,18 +177,16 @@
     <div class="container">
         <div id="name" aria-label="Animated Name"></div>
     </div>
-
-    <!-- Hypertext links -->
-    <a id="github-link" class="hypertext" href="https://github.com" target="_blank" aria-label="GitHub">GitHub</a>
-    <a id="matrix-link" class="hypertext" href="https://matrix.org" target="_blank" aria-label="Matrix">Matrix</a>
-    <a id="skylake-link" class="hypertext" href="https://www.intel.com/content/www/us/en/products/sku/123636/intel-core-i76700k-processor-8m-cache-up-to-4-20-ghz/specifications.html" target="_blank" aria-label="Skylake">Skylake</a>
+    <a href="https://github.com" class="hypertext github">GitHub</a>
+    <a href="https://matrix.org" class="hypertext matrix">Matrix</a>
+    <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)" class="hypertext skylake">Skylake</a>
 
     <script>
         const nameElement = document.getElementById('name');
         const snowContainer = document.getElementById('snow-container');
         const yourName = "ElysiumAyo"; // Customize your name/text here
 
-        // Snowflakes and graph background generation (same as before)
+        // Create snowflakes
         function createSnowflakes() {
             const snowflakeCount = Math.min(window.innerWidth / 6, 50);
             const fragment = document.createDocumentFragment();
@@ -200,19 +205,19 @@
                 `;
                 
                 snowflake.setAttribute('aria-hidden', 'true');
-                
                 fragment.appendChild(snowflake);
             }
             
             snowContainer.appendChild(fragment);
         }
 
+        // Create grid background
         function createGraphBackground() {
             const background = document.querySelector('.graph-background');
             background.innerHTML = '';
             
-            const rows = Math.ceil(window.innerHeight / 15);
-            const cols = Math.ceil(window.innerWidth / 15);
+            const rows = Math.ceil(window.innerHeight / 10);
+            const cols = Math.ceil(window.innerWidth / 10);
             const fragment = document.createDocumentFragment();
             
             for (let i = 0; i < rows * cols; i++) {
@@ -222,18 +227,7 @@
             background.appendChild(fragment);
         }
 
-        function debounce(func, wait = 250) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
+        // Type writer effect
         function typeWriter(text, element) {
             let i = 0;
             function type() {
@@ -246,20 +240,21 @@
             type();
         }
 
+        // Initialize
         function init() {
             typeWriter(yourName, nameElement);
             createSnowflakes();
             createGraphBackground();
         }
 
-        window.addEventListener('resize', debounce(() => {
+        // Resize listener
+        window.addEventListener('resize', () => {
             createGraphBackground();
             snowContainer.innerHTML = '';
             createSnowflakes();
-        }));
+        });
 
         init();
-        console.log('🖥️ Electronics-Inspired Design Loaded');
     </script>
 </body>
 </html>
