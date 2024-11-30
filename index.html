@@ -14,6 +14,7 @@
             --circuit-blue: #0077aa;
             --text-primary: #6ad4ff;
             --accent-color: #00ffaa;
+            --hypertext-color: #6ad4ff;
         }
 
         * {
@@ -85,31 +86,15 @@
             z-index: 1;
             pointer-events: none;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 15px); /* Reduced from 30px to 15px */
-            grid-template-rows: repeat(auto-fill, 15px); /* Reduced from 30px to 15px */
+            grid-template-columns: repeat(auto-fill, 15px);
+            grid-template-rows: repeat(auto-fill, 15px);
         }
 
         .graph-background div {
-            width: 15px; /* Reduced from 30px to 15px */
-            height: 15px; /* Reduced from 30px to 15px */
-            border: 1px solid rgba(106, 212, 255, 0.1); /* Reduced opacity */
-            opacity: 0.2; /* Reduced from 0.4 to 0.2 */
-        }
-
-        .graph-background::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, 
-                rgba(0, 0, 0, 0) 0%, 
-                rgba(0, 0, 0, 0.3) 50%, 
-                rgba(0, 0, 0, 0.7) 100%);
-            pointer-events: none;
-            z-index: 1;
-            filter: blur(2px);
+            width: 15px;
+            height: 15px;
+            border: 1px solid rgba(106, 212, 255, 0.1);
+            opacity: 0.2;
         }
 
         #snow-container {
@@ -146,10 +131,36 @@
             }
         }
 
-        @media (max-width: 768px) {
-            #name {
-                letter-spacing: -1px;
-            }
+        /* Hypertext styles */
+        .hypertext {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--hypertext-color);
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .hypertext:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        #github-link {
+            bottom: 10px;
+            right: 20px;
+        }
+
+        #matrix-link {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #skylake-link {
+            bottom: 10px;
+            left: 20px;
         }
     </style>
 </head>
@@ -160,12 +171,17 @@
         <div id="name" aria-label="Animated Name"></div>
     </div>
 
+    <!-- Hypertext links -->
+    <a id="github-link" class="hypertext" href="https://github.com" target="_blank" aria-label="GitHub">GitHub</a>
+    <a id="matrix-link" class="hypertext" href="https://matrix.org" target="_blank" aria-label="Matrix">Matrix</a>
+    <a id="skylake-link" class="hypertext" href="https://www.intel.com/content/www/us/en/products/sku/123636/intel-core-i76700k-processor-8m-cache-up-to-4-20-ghz/specifications.html" target="_blank" aria-label="Skylake">Skylake</a>
+
     <script>
         const nameElement = document.getElementById('name');
         const snowContainer = document.getElementById('snow-container');
         const yourName = "ElysiumAyo"; // Customize your name/text here
 
-        // Improved performance-optimized functions
+        // Snowflakes and graph background generation (same as before)
         function createSnowflakes() {
             const snowflakeCount = Math.min(window.innerWidth / 6, 50);
             const fragment = document.createDocumentFragment();
@@ -206,7 +222,6 @@
             background.appendChild(fragment);
         }
 
-        // Debounce function to optimize resize performance
         function debounce(func, wait = 250) {
             let timeout;
             return function executedFunction(...args) {
@@ -219,7 +234,6 @@
             };
         }
 
-        // Type writer effect
         function typeWriter(text, element) {
             let i = 0;
             function type() {
@@ -232,24 +246,19 @@
             type();
         }
 
-        // Initialize functions
         function init() {
             typeWriter(yourName, nameElement);
             createSnowflakes();
             createGraphBackground();
         }
 
-        // Event listeners
         window.addEventListener('resize', debounce(() => {
             createGraphBackground();
             snowContainer.innerHTML = '';
             createSnowflakes();
         }));
 
-        // Initial load
         init();
-
-        // Optional: Add console message
         console.log('🖥️ Electronics-Inspired Design Loaded');
     </script>
 </body>
