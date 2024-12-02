@@ -112,40 +112,6 @@
             filter: blur(2px);
         }
 
-        #snow-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .snowflake {
-            position: absolute;
-            background: linear-gradient(var(--circuit-green), var(--circuit-blue));
-            border-radius: 50%;
-            pointer-events: none;
-            will-change: transform;
-            box-shadow: 0 0 5px rgba(106, 212, 255, 0.5);
-            opacity: 0.8;
-        }
-
-        @keyframes blink {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fall {
-            to {
-                transform: 
-                    translateY(100vh) 
-                    rotate(360deg);
-                opacity: 0;
-            }
-        }
-
         .hypertext {
             position: fixed;
             font-size: 1rem;
@@ -199,11 +165,15 @@
                 font-size: clamp(1rem, 6vw, 1.2rem);
             }
         }
+
+        @keyframes blink {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
     <div class="graph-background"></div>
-    <div id="snow-container"></div>
     <div class="container">
         <div id="name" aria-label="Animated Name"></div>
     </div>
@@ -215,34 +185,8 @@
 
     <script>
         const nameElement = document.getElementById('name');
-        const snowContainer = document.getElementById('snow-container');
         const greetingElement = document.getElementById('greeting');
         const yourName = "ElysiumAyo"; // Customize your name/text here
-
-        // Create snowflakes
-        function createSnowflakes() {
-            const snowflakeCount = Math.min(window.innerWidth / 6, 50);
-            const fragment = document.createDocumentFragment();
-            
-            for (let i = 0; i < snowflakeCount; i++) {
-                const snowflake = document.createElement('div');
-                snowflake.classList.add('snowflake');
-                
-                const size = Math.random() * 3 + 2;
-                snowflake.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${Math.random() * 100}vw;
-                    top: ${-Math.random() * 100}px;
-                    animation: fall ${Math.random() * 10 + 5}s linear ${Math.random() * 5}s infinite;
-                `;
-                
-                snowflake.setAttribute('aria-hidden', 'true');
-                fragment.appendChild(snowflake);
-            }
-            
-            snowContainer.appendChild(fragment);
-        }
 
         // Create grid background
         function createGraphBackground() {
@@ -277,13 +221,13 @@
         // Time-based greeting
         function setGreeting() {
             const hour = new Date().getHours();
-            let greeting = "こんにちは";
+            let greeting = "Hello!";
             if (hour < 12) {
-                greeting = "- おはようございます"; // Good Morning
+                greeting = "Good Morning (おはようございます)";
             } else if (hour < 18) {
-                greeting = "- こんにちは"; // Good Afternoon
+                greeting = "Good Afternoon (こんにちは)";
             } else {
-                greeting = "- こんばんは"; // Good Evening
+                greeting = "Good Evening (こんばんは)";
             }
             greetingElement.textContent = greeting;
         }
@@ -293,16 +237,12 @@
             createGraphBackground();
             typeName();
             setGreeting();
-            createSnowflakes();
         }
 
         // Start the animation and greeting
         init();
 
-        window.addEventListener('resize', () => {
-            createGraphBackground();
-            createSnowflakes();
-        });
+        window.addEventListener('resize', createGraphBackground);
     </script>
 </body>
 </html>
