@@ -22,21 +22,16 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
         body {
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+            overflow: hidden;
             font-family: 'Orbitron', sans-serif;
             perspective: 1000px;
-            padding: 10px;
-            position: relative;
+            padding: 0 10px; /* Added padding for small screens */
         }
 
         .container {
@@ -49,7 +44,7 @@
         }
 
         #name {
-            font-size: clamp(1.8rem, 8vw, 4.5rem);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 700;
             color: var(--text-primary);
             position: relative;
@@ -61,7 +56,6 @@
             transition: all 0.3s ease;
             display: inline-block;
             line-height: 1.2;
-            word-break: break-all;
         }
 
         #name:hover {
@@ -94,7 +88,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, 10px);
             grid-template-rows: repeat(auto-fill, 10px);
-            overflow: hidden;
         }
 
         .graph-background div {
@@ -121,16 +114,11 @@
 
         .hypertext {
             position: fixed;
-            font-size: 0.8rem;
+            font-size: 1rem;
             color: var(--text-primary);
             text-decoration: none;
             font-weight: 700;
             z-index: 10;
-            transition: color 0.3s ease;
-        }
-
-        .hypertext:hover {
-            color: var(--accent-color);
         }
 
         .github {
@@ -153,62 +141,28 @@
             position: fixed;
             top: 5px;
             left: 4px;
-            font-size: clamp(1rem, 4vw, 2rem);
+            font-size: clamp(1.5rem, 4vw, 2rem);
             color: var(--circuit-green);
             font-weight: 700;
             z-index: 10;
-            word-break: break-word;
         }
 
-        /* Enhanced Media Queries for responsiveness */
+        /* Media Queries for responsiveness */
         @media screen and (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
-
-            .container {
-                padding: 0 10px;
-            }
-
             #name {
-                font-size: clamp(1.5rem, 10vw, 3.5rem);
-                letter-spacing: -1px;
+                font-size: clamp(2rem, 10vw, 3.5rem);
             }
-
             #greeting {
-                font-size: clamp(0.9rem, 5vw, 1.5rem);
-            }
-
-            .hypertext {
-                font-size: 0.7rem;
+                font-size: clamp(1rem, 5vw, 1.5rem);
             }
         }
 
         @media screen and (max-width: 480px) {
             #name {
-                font-size: clamp(1.2rem, 12vw, 3rem);
+                font-size: clamp(1.5rem, 12vw, 3rem);
             }
-
             #greeting {
-                font-size: clamp(0.8rem, 6vw, 1.2rem);
-            }
-
-            .hypertext {
-                font-size: 0.6rem;
-            }
-
-            .github {
-                bottom: 5px;
-                right: 5px;
-            }
-
-            .matrix {
-                bottom: 5px;
-            }
-
-            .skylake {
-                bottom: 5px;
-                left: 5px;
+                font-size: clamp(1rem, 6vw, 1.2rem);
             }
         }
 
