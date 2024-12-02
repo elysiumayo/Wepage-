@@ -25,52 +25,46 @@
 
         body {
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             overflow: hidden;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             font-family: 'Orbitron', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             perspective: 1000px;
-            padding: 0 10px;
+            position: relative;
         }
 
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
+        /* Black gradient overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        #name {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 700;
-            color: var(--text-primary);
-            position: relative;
-            letter-spacing: -2px;
-            text-shadow: 
-                0 0 5px rgba(106, 212, 255, 0.3),
-                0 0 10px rgba(106, 212, 255, 0.2);
-            transform-style: preserve-3d;
-            transition: none;
-            display: inline-block;
-            line-height: 1.2;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%, 
+                rgba(0, 0, 0, 0.2) 30%, 
+                rgba(0, 0, 0, 0.5) 60%, 
+                black 100%
+            );
+            pointer-events: none;
+            z-index: 1;
         }
 
         .graph-background {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.1);
-            z-index: 0;
-            pointer-events: none;
+            width: 100vw;
+            height: 100vh;
             display: grid;
             grid-template-columns: repeat(auto-fill, 10px);
             grid-template-rows: repeat(auto-fill, 10px);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(1px) brightness(0.8);
         }
 
         .graph-background div {
@@ -79,30 +73,23 @@
             border: 1px solid rgba(106, 212, 255, 0.1);
         }
 
-        .graph-background::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
+        .container {
+            position: relative;
+            text-align: center;
+            z-index: 10;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, 
-                rgba(0, 0, 0, 0) 0%, 
-                rgba(0, 0, 0, 0.3) 50%, 
-                rgba(0, 0, 0, 0.7) 100%);
-            pointer-events: none;
-            z-index: 1;
-            filter: blur(2px);
+            max-width: 800px;
         }
 
-        .falling-element {
-            position: fixed;
-            color: var(--circuit-blue);
-            opacity: 0.5;
-            font-size: 10px;
-            z-index: 1;
-            pointer-events: none;
-            user-select: none;
+        #name {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -2px;
+            text-shadow: 
+                0 0 5px rgba(106, 212, 255, 0.3),
+                0 0 10px rgba(106, 212, 255, 0.2);
+            line-height: 1.2;
         }
 
         .hypertext {
@@ -115,33 +102,30 @@
         }
 
         .github {
-            bottom: 1%;
+            bottom: 10px;
             right: 10px;
         }
 
         .matrix {
-            bottom: 1%;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
         }
 
         .skylake {
-            bottom: 1%;
+            bottom: 10px;
             left: 10px;
         }
 
         #greeting {
             position: fixed;
-            top: 2%;
-            left: 4px;
-            font-size: 20px;
-            font-weight: 400;
-            z-index: 10;
+            top: 10px;
+            left: 10px;
+            font-size: 1.2rem;
+            color: var(--text-primary);
             font-family: 'Noto Sans JP', sans-serif;
             opacity: 0;
             animation: fadeIn 2s ease-out forwards;
-            transition: color 0.3s ease, transform 0.5s ease;
-            color: var(--text-primary);
         }
 
         @keyframes fadeIn {
@@ -150,34 +134,27 @@
             }
         }
 
-        .animatedGreeting {
-            transform: translateY(-10px);
-            opacity: 0;
-            animation: slideIn 1s ease-out forwards;
-        }
-
-        @keyframes slideIn {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         @media screen and (max-width: 768px) {
             #name {
-                font-size: clamp(2rem, 10vw, 3.5rem);
+                font-size: clamp(2rem, 8vw, 3.5rem);
+            }
+            .hypertext {
+                font-size: 0.9rem;
             }
             #greeting {
-                font-size: 20px;
+                font-size: 1rem;
             }
         }
 
         @media screen and (max-width: 480px) {
             #name {
-                font-size: clamp(1.5rem, 12vw, 3rem);
+                font-size: clamp(2rem, 8vw, 3.5rem);
+            }
+            .hypertext {
+                font-size: 0.8rem;
             }
             #greeting {
-                font-size: 20px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -190,7 +167,6 @@
     <a href="https://github.com/elysiumayo" class="hypertext github">GitHub</a>
     <a href="" class="hypertext matrix">@elysiumayo:matrix.org</a>
     <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)" class="hypertext skylake">Skylake</a>
-
     <div id="greeting"></div>
 
     <script>
@@ -201,24 +177,19 @@
         function createGraphBackground() {
             const background = document.querySelector('.graph-background');
             background.innerHTML = '';
-            
             const rows = Math.ceil(window.innerHeight / 10);
             const cols = Math.ceil(window.innerWidth / 10);
-            const fragment = document.createDocumentFragment();
-            
             for (let i = 0; i < rows * cols; i++) {
-                fragment.appendChild(document.createElement('div'));
+                const div = document.createElement('div');
+                background.appendChild(div);
             }
-            
-            background.appendChild(fragment);
         }
 
         function typeName() {
             let i = 0;
-            const text = yourName;
             function type() {
-                if (i < text.length) {
-                    nameElement.innerHTML += text.charAt(i);
+                if (i < yourName.length) {
+                    nameElement.textContent += yourName.charAt(i);
                     i++;
                     setTimeout(type, 100);
                 }
@@ -228,82 +199,26 @@
 
         function setGreeting() {
             const hour = new Date().getHours();
-            let greeting = "こんにちは";
-            let symbol = "";
-
+            let greeting = "こんにちは"; // Default Japanese greeting
             if (hour < 12) {
-                greeting = "Good Morning";
-                symbol = "🌞";
+                greeting = "Good Morning 🌞";
             } else if (hour < 18) {
-                greeting = "Good Afternoon";
-                symbol = "🌤";
+                greeting = "Good Afternoon 🌤";
             } else {
-                greeting = "Good Evening";
-                symbol = "🌙";
+                greeting = "Good Evening 🌙";
             }
-
-            greetingElement.textContent = `${symbol} ${greeting}`;
-            greetingElement.classList.add("animatedGreeting");
-        }
-
-        function createFallingElements() {
-            const elements = ['◇', '◈', '◉', '◊', '○', '◌', '◍', '◎', '●', '◐', '◑', '◒', '◓', '◔', '◕', '◖', '◗'];
-            const container = document.body;
-
-            function createFallingElement() {
-                const element = document.createElement('div');
-                element.classList.add('falling-element');
-                element.textContent = elements[Math.floor(Math.random() * elements.length)];
-                
-                const startX = Math.random() * window.innerWidth;
-                element.style.left = `${startX}px`;
-                element.style.top = '-20px';
-                
-                container.appendChild(element);
-
-                let posY = -20;
-                const fallSpeed = Math.random() * 3 + 1;
-                const drift = (Math.random() - 0.5) * 2; // Random horizontal drift
-
-                function fall() {
-                    posY += fallSpeed;
-                    const driftX = startX + (posY * drift);
-                    
-                    element.style.top = `${posY}px`;
-                    element.style.left = `${driftX}px`;
-                    element.style.opacity = Math.max(0.1, 1 - (posY / window.innerHeight));
-
-                    if (posY < window.innerHeight) {
-                        requestAnimationFrame(fall);
-                    } else {
-                        container.removeChild(element);
-                    }
-                }
-
-                fall();
-            }
-
-            // Create falling elements periodically
-            function startFallingElements() {
-                createFallingElement();
-                setTimeout(startFallingElements, Math.random() * 200 + 50);
-            }
-
-            startFallingElements();
+            greetingElement.textContent = greeting;
         }
 
         function init() {
             createGraphBackground();
             typeName();
             setGreeting();
-            createFallingElements();
         }
 
         init();
 
-        window.addEventListener('resize', () => {
-            createGraphBackground();
-        });
+        window.addEventListener('resize', createGraphBackground);
     </script>
 </body>
 </html>
