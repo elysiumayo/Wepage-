@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electronics Inspired Design</title>
     <meta name="description" content="An interactive, electronics-inspired landing page with dynamic typography and particle effects">
-    <!-- Add Noto Sans JP font for Japanese text -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <style>
@@ -31,7 +30,7 @@
             align-items: center;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             overflow: hidden;
-            font-family: 'Orbitron', sans-serif; /* Default font */
+            font-family: 'Orbitron', sans-serif;
             perspective: 1000px;
             padding: 0 10px;
         }
@@ -96,6 +95,16 @@
             filter: blur(2px);
         }
 
+        .falling-element {
+            position: fixed;
+            color: var(--circuit-blue);
+            opacity: 0.5;
+            font-size: 10px;
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
         .hypertext {
             position: fixed;
             font-size: 1rem;
@@ -122,26 +131,25 @@
         }
 
         #greeting {
-    position: fixed;
-    top: 2%;
-    left: 4px;
-    font-size: 20px;
-    font-weight: 400;
-    z-index: 10;
-    font-family: 'Noto Sans JP', sans-serif;
-    opacity: 0;
-    animation: fadeIn 2s ease-out forwards;
-    transition: color 0.3s ease, transform 0.5s ease;
-    color: var(--text-primary); /* Ensure consistent color */
-}
-        /* Animation for fading in the greeting */
+            position: fixed;
+            top: 2%;
+            left: 4px;
+            font-size: 20px;
+            font-weight: 400;
+            z-index: 10;
+            font-family: 'Noto Sans JP', sans-serif;
+            opacity: 0;
+            animation: fadeIn 2s ease-out forwards;
+            transition: color 0.3s ease, transform 0.5s ease;
+            color: var(--text-primary);
+        }
+
         @keyframes fadeIn {
             to {
                 opacity: 1;
             }
         }
 
-        /* Subtle animation for greeting change */
         .animatedGreeting {
             transform: translateY(-10px);
             opacity: 0;
@@ -155,7 +163,6 @@
             }
         }
 
-        /* Media Queries for responsiveness */
         @media screen and (max-width: 768px) {
             #name {
                 font-size: clamp(2rem, 10vw, 3.5rem);
@@ -189,9 +196,8 @@
     <script>
         const nameElement = document.getElementById('name');
         const greetingElement = document.getElementById('greeting');
-        const yourName = "ElysiumAyo"; // Customize your name/text here
+        const yourName = "ElysiumAyo";
 
-        // Create grid background
         function createGraphBackground() {
             const background = document.querySelector('.graph-background');
             background.innerHTML = '';
@@ -207,7 +213,6 @@
             background.appendChild(fragment);
         }
 
-        // Typewriter effect for the name
         function typeName() {
             let i = 0;
             const text = yourName;
@@ -221,37 +226,79 @@
             type();
         }
 
-        // Time-based greeting with enhanced effects and symbols
         function setGreeting() {
             const hour = new Date().getHours();
             let greeting = "こんにちは";
-            let symbol = ""; // Variable for greeting symbol
+            let symbol = "";
 
-            // Determine greeting and symbol based on the time of day
             if (hour < 12) {
                 greeting = "Good Morning";
-                symbol = "🌞"; // Sun symbol for morning
+                symbol = "🌞";
             } else if (hour < 18) {
                 greeting = "Good Afternoon";
-                symbol = "🌤"; // Sun with clouds symbol for afternoon
+                symbol = "🌤";
             } else {
                 greeting = "Good Evening";
-                symbol = "🌙"; // Moon symbol for evening
+                symbol = "🌙";
             }
 
-            // Apply the greeting, symbol, and transition effect
             greetingElement.textContent = `${symbol} ${greeting}`;
-            greetingElement.classList.add("animatedGreeting"); // Trigger animation
+            greetingElement.classList.add("animatedGreeting");
         }
 
-        // Initialize the enhanced greeting
+        function createFallingElements() {
+            const elements = ['◇', '◈', '◉', '◊', '○', '◌', '◍', '◎', '●', '◐', '◑', '◒', '◓', '◔', '◕', '◖', '◗'];
+            const container = document.body;
+
+            function createFallingElement() {
+                const element = document.createElement('div');
+                element.classList.add('falling-element');
+                element.textContent = elements[Math.floor(Math.random() * elements.length)];
+                
+                const startX = Math.random() * window.innerWidth;
+                element.style.left = `${startX}px`;
+                element.style.top = '-20px';
+                
+                container.appendChild(element);
+
+                let posY = -20;
+                const fallSpeed = Math.random() * 3 + 1;
+                const drift = (Math.random() - 0.5) * 2; // Random horizontal drift
+
+                function fall() {
+                    posY += fallSpeed;
+                    const driftX = startX + (posY * drift);
+                    
+                    element.style.top = `${posY}px`;
+                    element.style.left = `${driftX}px`;
+                    element.style.opacity = Math.max(0.1, 1 - (posY / window.innerHeight));
+
+                    if (posY < window.innerHeight) {
+                        requestAnimationFrame(fall);
+                    } else {
+                        container.removeChild(element);
+                    }
+                }
+
+                fall();
+            }
+
+            // Create falling elements periodically
+            function startFallingElements() {
+                createFallingElement();
+                setTimeout(startFallingElements, Math.random() * 200 + 50);
+            }
+
+            startFallingElements();
+        }
+
         function init() {
             createGraphBackground();
             typeName();
             setGreeting();
+            createFallingElements();
         }
 
-        // Start the animation and greeting
         init();
 
         window.addEventListener('resize', () => {
