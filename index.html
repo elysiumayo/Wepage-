@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electronics Inspired Design</title>
     <meta name="description" content="An interactive, electronics-inspired landing page with dynamic typography and particle effects">
+    <!-- Add Noto Sans JP font for Japanese text -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0a1128;
@@ -29,9 +31,9 @@
             align-items: center;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
             overflow: hidden;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Orbitron', sans-serif; /* Default font */
             perspective: 1000px;
-            padding: 0 10px; /* Added padding for small screens */
+            padding: 0 10px;
         }
 
         .container {
@@ -53,27 +55,9 @@
                 0 0 5px rgba(106, 212, 255, 0.3),
                 0 0 10px rgba(106, 212, 255, 0.2);
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
+            transition: none;
             display: inline-block;
             line-height: 1.2;
-        }
-
-        #name:hover {
-            transform: scale(1.05) rotateX(10deg);
-        }
-
-        #name::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4px;
-            height: 0.8em;
-            background-color: var(--circuit-blue);
-            animation: blink 0.7s infinite alternate;
-            margin-left: 10px;
-            opacity: 0.6;
-            box-shadow: 0 0 5px rgba(106, 212, 255, 0.3);
         }
 
         .graph-background {
@@ -142,9 +126,33 @@
             top: 5px;
             left: 4px;
             font-size: clamp(1.5rem, 4vw, 2rem);
-            color: var(--circuit-green);
             font-weight: 700;
             z-index: 10;
+            font-family: 'Noto Sans JP', sans-serif; /* Use Noto Sans JP for Japanese text */
+            opacity: 0;
+            animation: fadeIn 2s ease-out forwards;
+            transition: color 0.3s ease, transform 0.5s ease;
+        }
+
+        /* Animation for fading in the greeting */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Subtle animation for greeting change */
+        .animatedGreeting {
+            transform: translateY(-10px);
+            opacity: 0;
+            animation: slideIn 1s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         /* Media Queries for responsiveness */
@@ -164,11 +172,6 @@
             #greeting {
                 font-size: clamp(1rem, 6vw, 1.2rem);
             }
-        }
-
-        @keyframes blink {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
     </style>
 </head>
@@ -204,7 +207,7 @@
             background.appendChild(fragment);
         }
 
-        // Type writer effect for the name
+        // Typewriter effect for the name
         function typeName() {
             let i = 0;
             const text = yourName;
@@ -218,21 +221,30 @@
             type();
         }
 
-        // Time-based greeting
+        // Time-based greeting with enhanced effects and symbols
         function setGreeting() {
             const hour = new Date().getHours();
-            let greeting = "Hello!";
+            let greeting = "こんにちは";
+            let symbol = ""; // Variable for greeting symbol
+
+            // Determine greeting and symbol based on the time of day
             if (hour < 12) {
-                greeting = "Good Morning (おはようございます)";
+                greeting = "Good Morning";
+                symbol = "🌞"; // Sun symbol for morning
             } else if (hour < 18) {
-                greeting = "Good Afternoon (こんにちは)";
+                greeting = "Good Afternoon";
+                symbol = "🌤"; // Sun with clouds symbol for afternoon
             } else {
-                greeting = "Good Evening (こんばんは)";
+                greeting = "Good Evening";
+                symbol = "🌙"; // Moon symbol for evening
             }
-            greetingElement.textContent = greeting;
+
+            // Apply the greeting, symbol, and transition effect
+            greetingElement.textContent = `${symbol} ${greeting}`;
+            greetingElement.classList.add("animatedGreeting"); // Trigger animation
         }
 
-        // Initialize
+        // Initialize the enhanced greeting
         function init() {
             createGraphBackground();
             typeName();
@@ -242,7 +254,10 @@
         // Start the animation and greeting
         init();
 
-        window.addEventListener('resize', createGraphBackground);
+        window.addEventListener('resize', () => {
+            createGraphBackground();
+        });
     </script>
 </body>
 </html>
+
