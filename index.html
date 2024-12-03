@@ -160,6 +160,25 @@
             animation: fadeIn 2s ease-out forwards;
         }
 
+        #language-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(106, 212, 255, 0.2);
+            color: var(--text-primary);
+            border: 1px solid var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Noto Sans JP', sans-serif;
+            z-index: 30;
+            transition: background-color 0.3s;
+        }
+
+        #language-toggle:hover {
+            background-color: rgba(106, 212, 255, 0.3);
+        }
+
         @keyframes fadeIn {
             to { opacity: 1; }
         }
@@ -167,19 +186,21 @@
         @media screen and (max-width: 480px) {
             .hypertext { font-size: 0.7rem; }
             #greeting { font-size: 0.9rem; }
+            #language-toggle { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
+    <button id="language-toggle">日本語</button>
     <div class="snowfall-container"></div>
     <div class="graph-background"></div>
     <div class="container">
         <div id="name" aria-label="Animated Name"></div>
-        <p id="tagline">Coding enthusiast & embedded systems explorer</p>
+        <p id="tagline" data-en="Coding enthusiast & embedded systems explorer" data-jp="コーディングと組み込みシステムに情熱を注ぐ">Coding enthusiast & embedded systems explorer</p>
     </div>
-    <a href="https://github.com/elysiumayo" class="hypertext github" title="Visit my GitHub Profile">╰┈➤ GitHub</a>
-    <a href="" class="hypertext matrix" title="Connect on Matrix">╰┈➤ @elysiumayo:matrix.org</a>
-    <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)" class="hypertext skylake" title="Learn about Skylake">╰┈➤ Skylake</a>
+    <a href="https://github.com/elysiumayo" class="hypertext github" title="Visit my GitHub Profile" data-en="╰┈➤ GitHub" data-jp="╰┈➤ ギットハブ">╰┈➤ GitHub</a>
+    <a href="" class="hypertext matrix" title="Connect on Matrix" data-en="╰┈➤ @elysiumayo:matrix.org" data-jp="╰┈➤ マトリックス">╰┈➤ @elysiumayo:matrix.org</a>
+    <a href="https://en.wikipedia.org/wiki/Skylake_(microarchitecture)" class="hypertext skylake" title="Learn about Skylake" data-en="╰┈➤ Skylake" data-jp="╰┈➤ スカイレイク">╰┈➤ Skylake</a>
     <div id="greeting"></div>
 
     <script>
@@ -187,7 +208,12 @@
         const greetingElement = document.getElementById('greeting');
         const snowfallContainer = document.querySelector('.snowfall-container');
         const graphBackground = document.querySelector('.graph-background');
+        const languageToggle = document.getElementById('language-toggle');
+        const tagline = document.getElementById('tagline');
+        const hyperlinks = document.querySelectorAll('.hypertext');
         const yourName = "ElysiumAyo";
+
+        let currentLanguage = 'en';
 
         function createGraphBackground() {
             const rows = Math.ceil(window.innerHeight / 10);
@@ -214,9 +240,23 @@
 
         function setGreeting() {
             const hour = new Date().getHours();
-            const greeting = hour < 12 ? ".ᐟ Good Morning" 
-                : hour < 18 ? ".ᐟ Good Afternoon" 
-                : ".ᐟ Good Evening";
+            const greetings = {
+                en: {
+                    morning: ".ᐟ Good Morning",
+                    afternoon: ".ᐟ Good Afternoon", 
+                    evening: ".ᐟ Good Evening"
+                },
+                jp: {
+                    morning: ".ᐟ おはようございます",
+                    afternoon: ".ᐟ こんにちは", 
+                    evening: ".ᐟ こんばんは"
+                }
+            };
+
+            const greetingSet = currentLanguage === 'en' ? greetings.en : greetings.jp;
+            const greeting = hour < 12 ? greetingSet.morning 
+                : hour < 18 ? greetingSet.afternoon 
+                : greetingSet.evening;
             greetingElement.textContent = greeting;
         }
 
@@ -242,11 +282,32 @@
             }).join('');
         }
 
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'jp' : 'en';
+            
+            // Toggle tagline
+            tagline.textContent = tagline.getAttribute(`data-${currentLanguage}`);
+            
+            // Toggle hyperlinks
+            hyperlinks.forEach(link => {
+                link.textContent = link.getAttribute(`data-${currentLanguage}`);
+            });
+
+            // Toggle language toggle button
+            languageToggle.textContent = currentLanguage === 'en' ? '日本語' : 'English';
+            
+            // Reset greeting
+            setGreeting();
+        }
+
         function init() {
             createGraphBackground();
             typeName();
             setGreeting();
             createSnowfall();
+
+            // Add language toggle event listener
+            languageToggle.addEventListener('click', toggleLanguage);
         }
 
         init();
