@@ -4,19 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ElysiumAyo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0a1128;
             --bg-darker: #03091c;
             --text-primary: #6ad4ff;
-        }
-
-        .light-theme {
-            --bg-dark: #f8f9fa;
-            --bg-darker: #e9ecef;
-            --text-primary: #0a1128;
         }
 
         * {
@@ -53,30 +46,6 @@
             z-index: 1;
         }
 
-        .snowfall-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .snowflake {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: snow-fall linear infinite;
-        }
-
-        @keyframes snow-fall {
-            0% { transform: translateY(-100px); }
-            100% { transform: translateY(calc(100vh + 50px)); }
-        }
-
         .graph-background {
             position: fixed;
             top: 0;
@@ -97,6 +66,29 @@
             border: 1px solid rgba(106, 212, 255, 0.1);
         }
 
+        .snowfall-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: snow-fall linear infinite;
+        }
+
+        @keyframes snow-fall {
+            to { transform: translateY(calc(100vh + 50px)); }
+        }
+
         .container {
             position: relative;
             text-align: center;
@@ -114,7 +106,6 @@
             text-shadow: 
                 0 0 5px rgba(106, 212, 255, 0.3),
                 0 0 10px rgba(106, 212, 255, 0.2);
-            line-height: 1.2;
         }
 
         #tagline {
@@ -131,13 +122,12 @@
             text-decoration: none;
             font-weight: 700;
             z-index: 20;
-            transition: transform 0.3s, text-shadow 0.3s, opacity 0.3s;
+            transition: transform 0.3s, text-shadow 0.3s;
         }
 
         .hypertext:hover {
             transform: scale(1.1);
             text-shadow: 0 0 8px var(--text-primary);
-            opacity: 0.7;
         }
 
         .github { bottom: 10px; right: 10px; }
@@ -160,12 +150,8 @@
         }
 
         @media screen and (max-width: 480px) {
-            .hypertext {
-                font-size: 0.7rem;
-            }
-            #greeting {
-                font-size: 0.9rem;
-            }
+            .hypertext { font-size: 0.7rem; }
+            #greeting { font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -184,71 +170,50 @@
     <script>
         const nameElement = document.getElementById('name');
         const greetingElement = document.getElementById('greeting');
+        const snowfallContainer = document.querySelector('.snowfall-container');
+        const graphBackground = document.querySelector('.graph-background');
         const yourName = "ElysiumAyo";
 
         function createGraphBackground() {
-            const background = document.querySelector('.graph-background');
-            background.innerHTML = '';
             const rows = Math.ceil(window.innerHeight / 10);
             const cols = Math.ceil(window.innerWidth / 10);
-            for (let i = 0; i < rows * cols; i++) {
-                const div = document.createElement('div');
-                background.appendChild(div);
-            }
+            graphBackground.innerHTML = Array.from({ length: rows * cols }, () => 
+                '<div></div>'
+            ).join('');
         }
 
         function typeName() {
-            let i = 0;
-            function type() {
-                if (i < yourName.length) {
-                    nameElement.textContent += yourName.charAt(i);
-                    i++;
-                    setTimeout(type, 100);
-                }
-            }
-            type();
+            nameElement.textContent = yourName;
         }
 
         function setGreeting() {
             const hour = new Date().getHours();
-            let greeting = "こんにちは";
-            if (hour < 12) {
-                greeting = ".ᐟ Good Morning";
-            } else if (hour < 18) {
-                greeting = ".ᐟ Good Afternoon";
-            } else {
-                greeting = ".ᐟ Good Evening";
-            }
+            const greeting = hour < 12 ? ".ᐟ Good Morning" 
+                : hour < 18 ? ".ᐟ Good Afternoon" 
+                : ".ᐟ Good Evening";
             greetingElement.textContent = greeting;
         }
 
         function createSnowfall() {
-            const snowfallContainer = document.querySelector('.snowfall-container');
-            const deviceMemory = navigator.deviceMemory || 4; // Default to 4GB
-            const numSnowflakes = deviceMemory < 2 ? 10 : window.innerWidth < 768 ? 30 : 50;
+            const numSnowflakes = window.innerWidth < 768 ? 30 : 50;
 
-            for (let i = 0; i < numSnowflakes; i++) {
-                const snowflake = document.createElement('div');
-                snowflake.classList.add('snowflake');
-
+            snowfallContainer.innerHTML = Array.from({ length: numSnowflakes }, () => {
                 const size = 2 + Math.random() * 3;
-                snowflake.style.width = `${size}px`;
-                snowflake.style.height = `${size}px`;
-
                 const leftPosition = Math.random() * window.innerWidth;
-                snowflake.style.left = `${leftPosition}px`;
-
                 const duration = 4 + Math.random() * 6;
                 const delay = Math.random() * 5;
-                snowflake.style.animationDuration = `${duration}s`;
-                snowflake.style.animationDelay = `-${delay}s`;
 
-                snowfallContainer.appendChild(snowflake);
-            }
-        }
-
-        function toggleTheme() {
-            document.documentElement.classList.toggle('light-theme');
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${leftPosition}px;
+                    animation-duration: ${duration}s;
+                    animation-delay: -${delay}s;
+                `;
+                return snowflake.outerHTML;
+            }).join('');
         }
 
         function init() {
@@ -262,7 +227,6 @@
 
         window.addEventListener('resize', () => {
             createGraphBackground();
-            document.querySelector('.snowfall-container').innerHTML = '';
             createSnowfall();
         });
     </script>
