@@ -109,6 +109,18 @@
             text-shadow: 
                 0 0 5px rgba(106, 212, 255, 0.3),
                 0 0 10px rgba(106, 212, 255, 0.2);
+            position: relative;
+        }
+
+        #name::after {
+            content: '|';
+            display: inline-block;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         #tagline {
@@ -186,7 +198,18 @@
         }
 
         function typeName() {
-            nameElement.textContent = yourName;
+            nameElement.textContent = '';
+            let index = 0;
+
+            function typeNextCharacter() {
+                if (index < yourName.length) {
+                    nameElement.textContent += yourName[index];
+                    index++;
+                    setTimeout(typeNextCharacter, 100 + Math.random() * 50);
+                }
+            }
+
+            typeNextCharacter();
         }
 
         function setGreeting() {
